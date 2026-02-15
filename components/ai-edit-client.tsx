@@ -6,10 +6,13 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Upload, Image as ImageIcon, Sparkles, X } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { toast } from "sonner"
+import { generateImage } from "@/lib/pocketbase"
 
 export function AIEditClient() {
   const [file, setFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const [resultImageUrl, setResultImageUrl] = useState<string | null>(null)
   const [dragActive, setDragActive] = useState(false)
   const [prompt, setPrompt] = useState("")
   const [strength, setStrength] = useState(50)
@@ -32,14 +35,14 @@ export function AIEditClient() {
     // Validate file type
     const validTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"]
     if (!validTypes.includes(selectedFile.type)) {
-      alert("Please upload a valid image file (JPG, PNG, WEBP)")
+      toast.error("Please upload a valid image file (JPG, PNG, WEBP)")
       return
     }
 
     // Validate file size (10MB)
     const maxSize = 10 * 1024 * 1024 // 10MB
     if (selectedFile.size > maxSize) {
-      alert("File size must be less than 10MB")
+      toast.error("File size must be less than 10MB")
       return
     }
 
@@ -47,6 +50,9 @@ export function AIEditClient() {
     if (previewUrl) {
       URL.revokeObjectURL(previewUrl)
     }
+
+    // Clear previous result
+    setResultImageUrl(null)
 
     setFile(selectedFile)
     const url = URL.createObjectURL(selectedFile)
@@ -110,31 +116,48 @@ export function AIEditClient() {
       URL.revokeObjectURL(previewUrl)
       setPreviewUrl(null)
     }
+    // Clear result image
+    setResultImageUrl(null)
     if (fileInputRef.current) {
       fileInputRef.current.value = ""
     }
   }
 
   // Handle generate
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
     if (!file) {
-      alert("Please upload an image first")
+      toast.error("Please upload an image first")
       return
     }
     if (!prompt.trim()) {
-      alert("Please enter a prompt")
+      toast.error("Please enter a prompt")
       return
     }
 
     setIsGenerating(true)
-    // TODO: Implement actual AI generation
-    console.log("Generating with:", { file, prompt, strength })
+    setResultImageUrl(null)
 
-    // Simulate generation delay
-    setTimeout(() => {
+    try {
+      toast.info("Starting image generation...", {
+        description: "This may take a few moments."
+      })
+
+      const imageUrl = await generateImage(file, prompt)
+
+      toast.success("Image generated successfully!", {
+        description: "Your AI-edited image is ready."
+      })
+
+      setResultImageUrl(imageUrl)
+    } catch (error) {
+      console.error("Image generation failed:", error)
+      const errorMessage = error instanceof Error ? error.message : "Image generation failed. Please try again."
+      toast.error("Generation failed", {
+        description: errorMessage
+      })
+    } finally {
       setIsGenerating(false)
-      alert("AI edit generation would happen here. This is a placeholder.")
-    }, 2000)
+    }
   }
 
   return (
@@ -337,6 +360,17 @@ export function AIEditClient() {
                       <p className="mt-2 text-sm text-neon-highlight">Generating AI edit...</p>
                       <p className="text-xs text-muted-foreground/70">This may take a few seconds</p>
                     </div>
+                  ) : resultImageUrl ? (
+                    <div className="relative h-full w-full overflow-hidden rounded-lg">
+                      <img
+                        src={resultImageUrl}
+                        alt="AI Edited Result"
+                        className="h-full w-full object-cover"
+                      />
+                      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
+                        <p className="text-xs font-medium text-white">AI Generated Image</p>
+                      </div>
+                    </div>
                   ) : (
                     <div className="text-center">
                       <Sparkles className="mx-auto h-12 w-12 text-neon-highlight/50" />
@@ -350,7 +384,7 @@ export function AIEditClient() {
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">Status:</span>
                   <span className="font-mono text-sm text-neon-highlight">
-                    {isGenerating ? "Processing..." : file ? "Ready" : "Waiting for upload"}
+                    {isGenerating ? "Processing..." : resultImageUrl ? "Generated" : file ? "Ready" : "Waiting for upload"}
                   </span>
                 </div>
               </div>
