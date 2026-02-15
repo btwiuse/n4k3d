@@ -50,7 +50,7 @@ interface WalletModalProps {
 export function WalletModal({ open, onOpenChange }: WalletModalProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="glass-panel neon-border border-0 sm:max-w-md">
+      <DialogContent className="border border-[rgba(74,194,234,0.2)] bg-[#1a1940] sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-card-foreground">
             <Wallet className="h-5 w-5 text-neon-cyan" />
