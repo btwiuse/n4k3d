@@ -1,9 +1,17 @@
 import { Lock } from "lucide-react"
-import { creators } from "@/lib/data"
+
+const followerImages = [
+  { src: "/images/avatar-9.png", name: "Model 1", locked: true },
+  { src: "/images/avatar-2.png", name: "Model 2", locked: false },
+  { src: "/images/avatar-6.png", name: "Model 3", locked: true },
+  { src: "/images/avatar-5.png", name: "Model 4", locked: false },
+  { src: "/images/avatar-8.png", name: "Model 5", locked: true },
+  { src: "/images/photo-7.png", name: "Model 6", locked: false },
+  { src: "/images/avatar-4.png", name: "Model 7", locked: true },
+  { src: "/images/photo-10.png", name: "Model 8", locked: false },
+]
 
 export function FollowersRow() {
-  const thumbnails = creators.slice(0, 8)
-
   return (
     <section className="px-4 py-16 lg:px-8">
       <div className="mx-auto max-w-7xl">
@@ -19,30 +27,26 @@ export function FollowersRow() {
 
           {/* Circular thumbnails */}
           <div className="mb-6 flex flex-wrap justify-center gap-4 sm:justify-start">
-            {thumbnails.map((c, i) => {
-              const isBlurred = i % 2 === 0
-
-              return (
-                <div key={c.id} className="relative">
-                  <div
-                    className={`h-16 w-16 overflow-hidden rounded-full border-2 sm:h-20 sm:w-20 ${
-                      isBlurred ? "grayscale border-neon-purple/30" : "border-neon-cyan/50"
-                    }`}
-                  >
-                    <img
-                      src={c.previewImage}
-                      alt={c.name}
-                      className={`h-full w-full object-cover ${isBlurred ? "blur-sm" : ""}`}
-                    />
-                  </div>
-                  {isBlurred && (
-                    <div className="absolute inset-0 flex items-center justify-center rounded-full bg-[#15142c]/40">
-                      <Lock className="h-4 w-4 text-neon-purple drop-shadow-md" />
-                    </div>
-                  )}
+            {followerImages.map((item, i) => (
+              <div key={i} className="relative">
+                <div
+                  className={`h-16 w-16 overflow-hidden rounded-full border-2 sm:h-20 sm:w-20 ${
+                    item.locked ? "grayscale border-neon-purple/30" : "border-neon-cyan/50"
+                  }`}
+                >
+                  <img
+                    src={item.src}
+                    alt={item.name}
+                    className={`h-full w-full object-cover ${item.locked ? "blur-sm" : ""}`}
+                  />
                 </div>
-              )
-            })}
+                {item.locked && (
+                  <div className="absolute inset-0 flex items-center justify-center rounded-full bg-[#15142c]/40">
+                    <Lock className="h-4 w-4 text-neon-purple drop-shadow-md" />
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
 
           <p className="max-w-lg text-sm leading-relaxed text-muted-foreground">
