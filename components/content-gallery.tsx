@@ -1,8 +1,10 @@
 "use client"
 
 import { useState } from "react"
-import { Lock, Loader2, CheckCircle2 } from "lucide-react"
+import { Lock, Loader2, CheckCircle2, Wallet } from "lucide-react"
 import { toast } from "sonner"
+import { Contract, parseEther } from "ethers"
+import { useWallet } from "@/lib/wallet-context"
 import type { ContentItem } from "@/lib/data"
 import {
   Dialog,
@@ -11,6 +13,13 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog"
+
+// Simulated contract ABI for a payable unlock function
+const UNLOCK_ABI = [
+  "function unlockContent(string contentId) payable",
+]
+// Placeholder contract address (would be real in production)
+const CONTRACT_ADDRESS = "0x0000000000000000000000000000000000000000"
 
 interface ContentGalleryProps {
   content: ContentItem[]
@@ -21,25 +30,52 @@ export function ContentGallery({ content, creatorName }: ContentGalleryProps) {
   const [unlockedIds, setUnlockedIds] = useState<Set<string>>(new Set())
   const [selectedItem, setSelectedItem] = useState<ContentItem | null>(null)
   const [isUnlocking, setIsUnlocking] = useState(false)
+  const { signer, address } = useWallet()
 
   const handleUnlock = async (item: ContentItem) => {
+    if (!signer || !address) {
+      toast.error("Wallet not connected", {
+        description: "Please connect your MetaMask wallet first.",
+      })
+      return
+    }
+
     setIsUnlocking(true)
 
-    // Simulate 1.5s blockchain transaction
-    await new Promise((resolve) => setTimeout(resolve, 1500))
+    try {
+      // Simulate an ethers.Contract call with a payable function sending ETH
+      const contract = new Contract(CONTRACT_ADDRESS, UNLOCK_ABI, signer)
 
-    setUnlockedIds((prev) => {
-      const next = new Set(prev)
-      next.add(item.id)
-      return next
-    })
-    setIsUnlocking(false)
-    setSelectedItem(null)
+      // In production this would send real ETH; here we simulate the call
+      // by catching the expected revert from the zero address
+      try {
+        await contract.unlockContent(item.id, {
+          value: parseEther(String(item.price)),
+        })
+      } catch {
+        // Expected to fail on the zero-address contract; simulate success
+        await new Promise((resolve) => setTimeout(resolve, 1500))
+      }
 
-    toast.success("Content unlocked!", {
-      description: `You paid ${item.price} VARA to ${creatorName}`,
-      icon: <CheckCircle2 className="h-4 w-4 text-brand-blue" />,
-    })
+      setUnlockedIds((prev) => {
+        const next = new Set(prev)
+        next.add(item.id)
+        return next
+      })
+      setSelectedItem(null)
+
+      toast.success("Content unlocked!", {
+        description: `You paid ${item.price} ETH to ${creatorName}`,
+        icon: <CheckCircle2 className="h-4 w-4 text-brand-blue" />,
+      })
+    } catch (err) {
+      console.error("Unlock failed:", err)
+      toast.error("Transaction failed", {
+        description: "The unlock transaction could not be completed.",
+      })
+    } finally {
+      setIsUnlocking(false)
+    }
   }
 
   return (
@@ -57,7 +93,7 @@ export function ContentGallery({ content, creatorName }: ContentGalleryProps) {
                   ? "border-brand-blue/30"
                   : "cursor-pointer border-border hover:border-brand-blue/40 hover:shadow-md"
               }`}
-              aria-label={isUnlocked ? `View unlocked content` : `Unlock for ${item.price} VARA`}
+              aria-label={isUnlocked ? `View unlocked content` : `Unlock for ${item.price} ETH`}
             >
               <img
                 src={item.imageUrl}
@@ -75,7 +111,7 @@ export function ContentGallery({ content, creatorName }: ContentGalleryProps) {
                     <Lock className="h-5 w-5 text-card-foreground" />
                   </div>
                   <span className="rounded-full bg-brand-blue px-3 py-1 font-mono text-xs font-bold text-white shadow-sm">
-                    {item.price} VARA
+                    {item.price} ETH
                   </span>
                 </div>
               )}
@@ -97,7 +133,7 @@ export function ContentGallery({ content, creatorName }: ContentGalleryProps) {
           <DialogHeader>
             <DialogTitle className="text-card-foreground">Unlock Content</DialogTitle>
             <DialogDescription className="text-muted-foreground">
-              Confirm your VARA payment to unlock this exclusive content
+              Confirm your ETH payment to unlock this exclusive content
             </DialogDescription>
           </DialogHeader>
 
@@ -116,10 +152,17 @@ export function ContentGallery({ content, creatorName }: ContentGalleryProps) {
                 </div>
               </div>
 
+              {!address && (
+                <div className="flex items-center gap-2 rounded-lg border border-amber-500/20 bg-amber-500/5 px-4 py-2 text-sm text-amber-400">
+                  <Wallet className="h-4 w-4" />
+                  {"Connect your wallet first to unlock content"}
+                </div>
+              )}
+
               <p className="text-center text-sm text-muted-foreground">
                 Unlock this content for{" "}
                 <span className="font-mono font-bold text-brand-blue">
-                  {selectedItem.price} VARA
+                  {selectedItem.price} ETH
                 </span>
                 ?
               </p>
@@ -127,7 +170,7 @@ export function ContentGallery({ content, creatorName }: ContentGalleryProps) {
               <div className="flex w-full flex-col gap-3">
                 <button
                   onClick={() => handleUnlock(selectedItem)}
-                  disabled={isUnlocking}
+                  disabled={isUnlocking || !address}
                   className="flex items-center justify-center gap-2 rounded-full bg-brand-blue px-6 py-3 text-sm font-semibold text-white shadow-sm transition-all hover:brightness-110 disabled:opacity-70"
                 >
                   {isUnlocking ? (

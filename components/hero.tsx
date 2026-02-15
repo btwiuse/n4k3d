@@ -3,9 +3,11 @@
 import { useState } from "react"
 import { creators } from "@/lib/data"
 import { WalletModal } from "./wallet-modal"
+import { useWallet } from "@/lib/wallet-context"
 
 export function Hero() {
   const [walletOpen, setWalletOpen] = useState(false)
+  const { address } = useWallet()
 
   return (
     <>
@@ -22,7 +24,7 @@ export function Hero() {
 
       <div className="relative z-10 mx-auto w-full max-w-7xl">
         <p className="mb-3 font-mono text-sm uppercase tracking-widest text-brand-blue animate-fade-in-up">
-          Powered by VARA Network
+          Powered by Ethereum
         </p>
 
         <h1
@@ -36,19 +38,21 @@ export function Hero() {
           className="mb-8 max-w-md text-base text-white/70 animate-fade-in-up lg:text-lg"
           style={{ animationDelay: "0.2s" }}
         >
-          Pay creators directly in VARA tokens. No middlemen. No limits.
+          Pay creators directly in ETH. No middlemen. No limits.
         </p>
 
         <div
           className="flex flex-wrap items-center gap-5 animate-fade-in-up"
           style={{ animationDelay: "0.3s" }}
         >
-          <button
-            onClick={() => setWalletOpen(true)}
-            className="inline-flex items-center gap-2 rounded-full bg-brand-blue px-8 py-3 text-sm font-semibold text-white shadow-lg transition-all hover:brightness-110"
-          >
-            Join Now
-          </button>
+          {!address && (
+            <button
+              onClick={() => setWalletOpen(true)}
+              className="inline-flex items-center gap-2 rounded-full bg-brand-blue px-8 py-3 text-sm font-semibold text-white shadow-lg transition-all hover:brightness-110"
+            >
+              Connect Wallet
+            </button>
+          )}
 
           {/* Stacked avatars */}
           <div className="flex items-center gap-3">

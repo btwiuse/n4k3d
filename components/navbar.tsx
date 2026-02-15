@@ -2,12 +2,14 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { Menu, X, Wallet } from "lucide-react"
+import { Menu, X, Wallet, LogOut } from "lucide-react"
 import { WalletModal } from "./wallet-modal"
+import { useWallet } from "@/lib/wallet-context"
 
 export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [walletOpen, setWalletOpen] = useState(false)
+  const { address, truncatedAddress, disconnect } = useWallet()
 
   return (
     <>
@@ -33,14 +35,30 @@ export function Navbar() {
             ))}
           </div>
 
-          <div className="hidden md:block">
-            <button
-              onClick={() => setWalletOpen(true)}
-              className="btn-neon flex items-center gap-2 rounded-full px-5 py-2 text-sm font-medium text-neon-cyan transition-all"
-            >
-              <Wallet className="h-4 w-4" />
-              Join Now
-            </button>
+          <div className="hidden md:flex md:items-center md:gap-2">
+            {address ? (
+              <div className="flex items-center gap-2">
+                <span className="flex items-center gap-2 rounded-full border border-neon-cyan/30 bg-neon-cyan/5 px-4 py-2 font-mono text-sm text-neon-cyan">
+                  <Wallet className="h-4 w-4" />
+                  {truncatedAddress}
+                </span>
+                <button
+                  onClick={disconnect}
+                  className="flex items-center gap-1 rounded-full border border-red-500/20 bg-red-500/5 px-3 py-2 text-sm text-red-400 transition-all hover:border-red-500/40 hover:bg-red-500/10"
+                  aria-label="Disconnect wallet"
+                >
+                  <LogOut className="h-4 w-4" />
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => setWalletOpen(true)}
+                className="btn-neon flex items-center gap-2 rounded-full px-5 py-2 text-sm font-medium text-neon-cyan transition-all"
+              >
+                <Wallet className="h-4 w-4" />
+                Connect Wallet
+              </button>
+            )}
           </div>
 
           {/* Mobile toggle */}
@@ -66,16 +84,35 @@ export function Navbar() {
                 {item}
               </Link>
             ))}
-            <button
-              onClick={() => {
-                setMobileOpen(false)
-                setWalletOpen(true)
-              }}
-              className="btn-neon mt-2 flex items-center justify-center gap-2 rounded-full px-5 py-2 text-sm font-medium text-neon-cyan transition-all"
-            >
-              <Wallet className="h-4 w-4" />
-              Join Now
-            </button>
+            {address ? (
+              <div className="mt-2 flex items-center gap-2">
+                <span className="flex flex-1 items-center justify-center gap-2 rounded-full border border-neon-cyan/30 bg-neon-cyan/5 px-4 py-2 font-mono text-sm text-neon-cyan">
+                  <Wallet className="h-4 w-4" />
+                  {truncatedAddress}
+                </span>
+                <button
+                  onClick={() => {
+                    disconnect()
+                    setMobileOpen(false)
+                  }}
+                  className="flex items-center gap-1 rounded-full border border-red-500/20 bg-red-500/5 px-3 py-2 text-sm text-red-400 transition-all hover:border-red-500/40 hover:bg-red-500/10"
+                  aria-label="Disconnect wallet"
+                >
+                  <LogOut className="h-4 w-4" />
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => {
+                  setMobileOpen(false)
+                  setWalletOpen(true)
+                }}
+                className="btn-neon mt-2 flex items-center justify-center gap-2 rounded-full px-5 py-2 text-sm font-medium text-neon-cyan transition-all"
+              >
+                <Wallet className="h-4 w-4" />
+                Connect Wallet
+              </button>
+            )}
           </div>
         )}
       </nav>

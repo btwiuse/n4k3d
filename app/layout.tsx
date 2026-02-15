@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import { Space_Grotesk, Space_Mono } from 'next/font/google'
 import { Toaster } from 'sonner'
+import { WalletProvider } from '@/lib/wallet-context'
 
 import './globals.css'
 
@@ -18,7 +19,7 @@ const spaceMono = Space_Mono({
 export const metadata: Metadata = {
   title: 'Nak3dCrypto - Exclusive Content, Decentralized Access',
   description:
-    'Pay creators directly in VARA tokens. No middlemen. No limits. The decentralized content platform for exclusive creator content.',
+    'Pay creators directly in ETH. No middlemen. No limits. The decentralized content platform for exclusive creator content.',
 }
 
 export const viewport: Viewport = {
@@ -33,7 +34,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${spaceGrotesk.variable} ${spaceMono.variable}`}>
       <body className="font-sans antialiased min-h-screen" suppressHydrationWarning>
+        <WalletProvider>
         {children}
+        </WalletProvider>
         <Toaster
           theme="dark"
           toastOptions={{

@@ -69,7 +69,7 @@ export function ProfileHeader({ creator }: ProfileHeaderProps) {
                 {creator.totalEarnings.toLocaleString()}
               </span>
             </div>
-            <span className="text-xs text-muted-foreground">VARA Earned</span>
+            <span className="text-xs text-muted-foreground">ETH Earned</span>
           </div>
         </div>
       </div>

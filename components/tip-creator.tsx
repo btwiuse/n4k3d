@@ -12,7 +12,7 @@ export function TipCreator({ creatorName }: TipCreatorProps) {
   const [amount, setAmount] = useState("")
   const [isSending, setIsSending] = useState(false)
 
-  const presets = [5, 10, 25, 50]
+  const presets = [0.01, 0.025, 0.05, 0.1]
 
   const handleSendTip = async () => {
     if (!amount || parseFloat(amount) <= 0) return
@@ -23,7 +23,7 @@ export function TipCreator({ creatorName }: TipCreatorProps) {
     setAmount("")
 
     toast.success(`Tip sent to ${creatorName}!`, {
-      description: `You tipped ${amount} VARA`,
+      description: `You tipped ${amount} ETH`,
     })
   }
 
@@ -50,7 +50,7 @@ export function TipCreator({ creatorName }: TipCreatorProps) {
                 : "border-border text-muted-foreground hover:border-brand-blue/30 hover:text-card-foreground"
             }`}
           >
-            {p} VARA
+            {p} ETH
           </button>
         ))}
       </div>
@@ -67,7 +67,7 @@ export function TipCreator({ creatorName }: TipCreatorProps) {
             className="h-10 w-full rounded-lg border border-border bg-secondary/40 px-3 pr-16 font-mono text-sm text-card-foreground placeholder:text-muted-foreground/50 focus:border-brand-blue/40 focus:outline-none focus:ring-1 focus:ring-brand-blue/30"
           />
           <span className="absolute right-3 top-1/2 -translate-y-1/2 font-mono text-xs text-muted-foreground">
-            VARA
+            ETH
           </span>
         </div>
         <button

@@ -76,7 +76,7 @@ export default function Page() {
         <div className="neon-divider mx-auto mt-10 max-w-7xl" />
         <div className="mx-auto max-w-7xl pt-6 text-center">
           <p className="text-xs text-muted-foreground/60">
-            Nak3dCrypto &mdash; Built on VARA Network. Decentralized content platform. All payments are peer-to-peer.
+            Nak3dCrypto &mdash; Built on Ethereum. Decentralized content platform. All payments are peer-to-peer.
           </p>
         </div>
       </footer>
