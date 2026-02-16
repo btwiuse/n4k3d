@@ -19,7 +19,7 @@ export async function getGeneratedImageURL(recordId: string): Promise<string> {
   }
 
   if (record.result.data && record.result.data[0]?.url) {
-    return record.result.data[0].url;
+    return 'https://no-cors.deno.dev/' + record.result.data[0].url;
   } else if (record.result.error) {
     throw new Error(record.result.error.message || 'Image generation failed');
   } else {
