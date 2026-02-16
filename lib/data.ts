@@ -68,7 +68,7 @@ export const creators: Creator[] = [
     id: "pixelrose",
     name: "PixelRose",
     bio: "Retro-futuristic artist. Every pixel tells a story you can't look away from.",
-    avatar: "/images/avatar-3.png",
+    avatar: "/images/avatar-3-new.png",
     coverImage: "",
     previewImage: "/images/model-3-new.png",
     subscribers: 15200,
