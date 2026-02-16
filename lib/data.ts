@@ -70,7 +70,7 @@ export const creators: Creator[] = [
     bio: "Retro-futuristic artist. Every pixel tells a story you can't look away from.",
     avatar: "/images/avatar-3.png",
     coverImage: "",
-    previewImage: "/images/model-3.png",
+    previewImage: "/images/model-3-new.png",
     subscribers: 15200,
     totalContent: 62,
     totalEarnings: 21.0,
