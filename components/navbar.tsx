@@ -24,10 +24,10 @@ export function Navbar() {
 
           {/* Desktop nav */}
           <div className="hidden items-center gap-1 md:flex">
-            {["Models", "Offers", "Trending", "Exclusive"].map((item) => (
+            {["Models", "Offers", "Trending", "Exclusive", "AI Edit"].map((item) => (
               <Link
                 key={item}
-                href="/#creators"
+                href={item === "AI Edit" ? "/ai-edit" : "/#creators"}
                 className="rounded-full px-4 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-neon-cyan/10 hover:text-neon-cyan"
               >
                 {item}
@@ -74,10 +74,10 @@ export function Navbar() {
         {/* Mobile menu */}
         {mobileOpen && (
           <div className="flex flex-col gap-2 border-t border-neon-cyan/10 px-4 pb-6 pt-4 md:hidden">
-            {["Models", "Offers", "Trending", "Exclusive"].map((item) => (
+            {["Models", "Offers", "Trending", "Exclusive", "AI Edit"].map((item) => (
               <Link
                 key={item}
-                href="/#creators"
+                href={item === "AI Edit" ? "/ai-edit" : "/#creators"}
                 onClick={() => setMobileOpen(false)}
                 className="rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-neon-cyan/10 hover:text-neon-cyan"
               >
